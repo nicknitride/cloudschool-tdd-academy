@@ -32,6 +32,9 @@ class TodoExercisesTest {
     @InjectMocks
     private AnimalService animalService;
 
+    @Mock
+    private AnimalService mockedAnimalServiceForZooManager;
+
     @InjectMocks
     private ZooManager zooManager;
 
@@ -44,7 +47,6 @@ class TodoExercisesTest {
         simba = new Animal("Simba", "Lion", 180.5, LocalDate.of(2020, 5, 15), "Healthy");
         nala = new Animal("Nala", "Lion", 160.0, LocalDate.of(2020, 6, 20), "Healthy");
         timon = new Animal("Timon", "Meerkat", 2.5, LocalDate.of(2021, 3, 10), "Healthy");
-        zooManager = new ZooManager(animalService,notificationService);
     }
 
     // ========== MOCK EXERCISES ==========
@@ -167,7 +169,12 @@ class TodoExercisesTest {
         
         // Your code here:
          simba.setId(1L);
-         when(animalRepository.save(any(Animal.class))).thenReturn(simba);
+         /*
+         * The commented statement below is not necessary
+         * to invoke the sendEmail method. It is also throwing
+         * UnnecessaryStubbingException.
+         */
+//         when(animalRepository.save(any(Animal.class))).thenReturn(simba);
 
          zooManager.addNewAnimal(simba);
 
@@ -191,12 +198,20 @@ class TodoExercisesTest {
         //    - message containing "Simba"
         
         // Your code here:
-         simba.setId(1L);
+         /*
+         *  since ZooManager is the UUT, its AnimalService dependency
+         *  is a mock object. There's no need to stub the animalRepository
+         *  since it is not needed.
+         */
+        /* --old code
          when(animalRepository.findById(1L)).thenReturn(Optional.of(simba));
          when(animalRepository.existsById(1L)).thenReturn(true);
          doNothing().when(animalRepository).deleteById(1L);
-
-         zooManager.removeAnimal(1L);
+        */
+        simba.setId(1L);
+        when(mockedAnimalServiceForZooManager.getAnimalById(1L)).thenReturn(Optional.of(simba));
+        when(mockedAnimalServiceForZooManager.deleteAnimal(1L)).thenReturn(true);
+        zooManager.removeAnimal(1L);
 
          verify(notificationService, times(1)).sendSMS(
              eq("+1234567890"),
@@ -213,9 +228,14 @@ class TodoExercisesTest {
         // 3. Verify that notificationService.sendEmail was NEVER called
         
         // Your code here:
+        /*
+         *  since ZooManager is the UUT, its AnimalService dependency
+         *  is a mock object. There's no need to stub the animalRepository
+         *  since it is not needed.
+         */
          simba.setId(1L);
          simba.setHealthStatus("Healthy");
-         when(animalRepository.findById(1L)).thenReturn(Optional.of(simba));
+         when(mockedAnimalServiceForZooManager.isAnimalHealthy(1L)).thenReturn(true);
 
          zooManager.checkAnimalHealth(1L);
 
@@ -256,7 +276,13 @@ class TodoExercisesTest {
         
         // Your code here:
          simba.setId(1L);
-         when(animalRepository.save(any(Animal.class))).thenReturn(simba);
+        /*
+         *  since ZooManager is the UUT, its AnimalService dependency
+         *  is a mock object. There's no need to stub the animalRepository
+         *  since it is not needed.
+         *  Line below is unnecessary and causes UnnecessaryStubbingException.
+         */
+        // when(animalRepository.save(any(Animal.class))).thenReturn(simba);
 
          zooManager.addNewAnimal(simba);
 
@@ -282,6 +308,13 @@ class TodoExercisesTest {
         // Your code here:
          simba.setId(1L);
          simba.setHealthStatus("Sick");
+         /*
+            We need to create a spy for AnimalService to verify
+            the invocation count. We need to manually insert it
+            in a new instance of ZooManager.
+          */
+         AnimalService spyAnimalService = spy(animalService);
+         zooManager = new ZooManager(spyAnimalService, notificationService);
          when(animalRepository.findById(1L)).thenReturn(Optional.of(simba));
 
          zooManager.checkAnimalHealth(1L);
