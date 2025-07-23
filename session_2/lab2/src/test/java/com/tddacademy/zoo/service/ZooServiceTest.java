@@ -4,6 +4,7 @@ import com.tddacademy.zoo.model.Zoo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ZooServiceTest {
-
     private ZooService zooService;
 
     @BeforeEach
