@@ -158,45 +158,40 @@ class ZooControllerTest {
     @Test
     @DisplayName("PUT /api/zoos/{id} should return 404 when zoo does not exist")
     void shouldReturn404WhenUpdatingNonExistentZoo() throws Exception {
-        // TODO: Complete this test
         // 1. Set up the mock to throw an exception: when(zooService.updateZoo(eq(999L), any(Zoo.class))).thenThrow(new IllegalArgumentException("Zoo not found with id: 999"));
         // 2. Use mockMvc.perform(put("/api/zoos/999").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(testZoo)))
         // 3. Add expectation for status().isNotFound()
-        
+
+        Long fakeZooId = 999L;
         // Your code here:
-        // when(zooService.updateZoo(eq(999L), any(Zoo.class))).thenThrow(new IllegalArgumentException("Zoo not found with id: 999"));
-        // mockMvc.perform(put("/api/zoos/999")
-        //         .contentType(MediaType.APPLICATION_JSON)
-        //         .content(objectMapper.writeValueAsString(testZoo)))
-        //     .andExpect(...);
+        when(zooService.updateZoo(eq(fakeZooId),any(Zoo.class))).thenThrow(new IllegalArgumentException("Zoo not found with id: "+fakeZooId));
+        mockMvc.perform(put("/api/zoos/999").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(testZoo)))
+                .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("DELETE /api/zoos/{id} should delete zoo successfully")
     void shouldDeleteZooSuccessfully() throws Exception {
-        // TODO: Complete this test
         // 1. Set up the mock: doNothing().when(zooService).deleteZoo(1L);
         // 2. Use mockMvc.perform(delete("/api/zoos/1")) to make a DELETE request
         // 3. Add expectation for status().isNoContent()
         
         // Your code here:
-        // doNothing().when(zooService).deleteZoo(1L);
-        // mockMvc.perform(delete("/api/zoos/1"))
-        //     .andExpect(...);
+        doNothing().when(zooService).deleteZoo(1L);
+        mockMvc.perform(delete("/api/zoos/1"))
+                .andExpect(status().isNoContent());
     }
 
     @Test
     @DisplayName("DELETE /api/zoos/{id} should return 404 when zoo does not exist")
     void shouldReturn404WhenDeletingNonExistentZoo() throws Exception {
-        // TODO: Complete this test
         // 1. Set up the mock to throw an exception: doThrow(new IllegalArgumentException("Zoo not found with id: 999")).when(zooService).deleteZoo(999L);
         // 2. Use mockMvc.perform(delete("/api/zoos/999")) to make a DELETE request
         // 3. Add expectation for status().isNotFound()
         
         // Your code here:
-        // doThrow(new IllegalArgumentException("Zoo not found with id: 999")).when(zooService).deleteZoo(999L);
-        // mockMvc.perform(delete("/api/zoos/999"))
-        //     .andExpect(...);
+        doThrow(new IllegalArgumentException("Zoo not found with id: 999")).when(zooService).deleteZoo(999L);
+        mockMvc.perform(delete("/api/zoos/999")).andExpect(status().isNotFound());
     }
 
     @Test
@@ -217,10 +212,8 @@ class ZooControllerTest {
         // 2. Add expectation for status().isBadRequest()
         
         // Your code here:
-        // mockMvc.perform(put("/api/zoos/1")
-        //         .contentType(MediaType.APPLICATION_JSON)
-        //         .content("{ invalid json }"))
-        //     .andExpect(...);
+        mockMvc.perform(put("/api/zoos/1").contentType(MediaType.APPLICATION_JSON).content("{ invalid json }"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
