@@ -8,8 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -28,7 +28,7 @@ class ZooControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private ZooService zooService;
 
     @Autowired
@@ -103,7 +103,6 @@ class ZooControllerTest {
     @Test
     @DisplayName("Should update zoo when exists")
     void shouldUpdateZooWhenExists() throws Exception {
-        // TODO: Complete this test
         // 1. Set up the existing zoo with ID 1
         // 2. Create a zoo with updated details
         // 3. Mock zooService.updateZoo(1L, any(Zoo.class)) to return the updated zoo
@@ -112,69 +111,66 @@ class ZooControllerTest {
         // 6. Expect the response to contain the updated name
         
         // Your code here:
-        // manilaZoo.setId(1L);
-        // Zoo updatedZoo = new Zoo("Updated Manila Zoo", "Updated Location", "Updated description");
-        // updatedZoo.setId(1L);
-        //
-        // when(zooService.updateZoo(eq(1L), any(Zoo.class))).thenReturn(updatedZoo);
-        //
-        // mockMvc.perform(put("/api/zoos/1")
-        //         .contentType(MediaType.APPLICATION_JSON)
-        //         .content(objectMapper.writeValueAsString(updatedZoo)))
-        //         .andExpect(status().isOk())
-        //         .andExpect(jsonPath("$.name").value("Updated Manila Zoo"));
+         manilaZoo.setId(1L);
+         Zoo updatedZoo = new Zoo("Updated Manila Zoo", "Updated Location", "Updated description");
+         updatedZoo.setId(1L);
+
+         when(zooService.updateZoo(eq(1L), any(Zoo.class))).thenReturn(updatedZoo);
+
+         mockMvc.perform(put("/api/zoos/1")
+                 .contentType(MediaType.APPLICATION_JSON)
+                 .content(objectMapper.writeValueAsString(updatedZoo)))
+                 .andExpect(status().isOk())
+                 .andExpect(jsonPath("$.name").value("Updated Manila Zoo"));
     }
 
     @Test
     @DisplayName("Should return 404 when updating non-existent zoo")
     void shouldReturn404WhenUpdatingNonExistentZoo() throws Exception {
-        // TODO: Complete this test
         // 1. Create a zoo with updated details
         // 2. Mock zooService.updateZoo(999L, any(Zoo.class)) to throw IllegalArgumentException
         // 3. Perform PUT request to "/api/zoos/999" with the updated zoo JSON
         // 4. Expect status 404 (Not Found)
         
         // Your code here:
-        // Zoo updatedZoo = new Zoo("Updated Zoo", "Updated Location", "Updated description");
-        //
-        // when(zooService.updateZoo(eq(999L), any(Zoo.class)))
-        //         .thenThrow(new IllegalArgumentException("Zoo not found with id: 999"));
-        //
-        // mockMvc.perform(put("/api/zoos/999")
-        //         .contentType(MediaType.APPLICATION_JSON)
-        //         .content(objectMapper.writeValueAsString(updatedZoo)))
-        //         .andExpect(status().isNotFound());
+         Zoo updatedZoo = new Zoo("Updated Zoo", "Updated Location", "Updated description");
+
+         when(zooService.updateZoo(eq(999L), any(Zoo.class)))
+                 .thenThrow(new IllegalArgumentException("Zoo not found with id: 999"));
+
+         mockMvc.perform(put("/api/zoos/999")
+                 .contentType(MediaType.APPLICATION_JSON)
+                 .content(objectMapper.writeValueAsString(updatedZoo)))
+                 .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("Should delete zoo when exists")
     void shouldDeleteZooWhenExists() throws Exception {
-        // TODO: Complete this test
         // 1. Mock zooService.deleteZoo(1L) to do nothing (void method)
         // 2. Perform DELETE request to "/api/zoos/1"
         // 3. Expect status 204 (No Content)
         
         // Your code here:
-        // doNothing().when(zooService).deleteZoo(1L);
-        //
-        // mockMvc.perform(delete("/api/zoos/1"))
-        //         .andExpect(status().isNoContent());
+         doNothing().when(zooService).deleteZoo(1L);
+
+         mockMvc.perform(delete("/api/zoos/1"))
+                 .andExpect(status().isNoContent());
     }
 
     @Test
     @DisplayName("Should return 404 when deleting non-existent zoo")
     void shouldReturn404WhenDeletingNonExistentZoo() throws Exception {
-        // TODO: Complete this test
         // 1. Mock zooService.deleteZoo(999L) to throw IllegalArgumentException
         // 2. Perform DELETE request to "/api/zoos/999"
         // 3. Expect status 404 (Not Found)
         
         // Your code here:
-        // doThrow(new IllegalArgumentException("Zoo not found with id: 999"))
-        //         .when(zooService).deleteZoo(999L);
-        //
-        // mockMvc.perform(delete("/api/zoos/999"))
-        //         .andExpect(status().isNotFound());
+         doThrow(new IllegalArgumentException("Zoo not found with id: 999"))
+                 .when(zooService).deleteZoo(999L);
+
+         mockMvc.perform(delete("/api/zoos/999"))
+                 .andExpect(status().isNotFound());
     }
 
     @Test
